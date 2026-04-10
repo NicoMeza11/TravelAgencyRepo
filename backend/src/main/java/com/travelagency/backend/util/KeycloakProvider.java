@@ -13,21 +13,21 @@ public class KeycloakProvider {
 
     @Value("${KCK_URL}")
     private String serverUrl;
-    @Value("{KCK_REALM")
+    @Value("${KCK_REALM}")
     private String realmName;
-    private String ADMIN_CLI = "admin-cli";
-    private String USER_CONSOLE = "admin";
-    private String PASSWORD_CONSOLE = "admin";
-    private String CLIENT_SECRET = "tJb69UqzuhW9fHcLNxYDILImpTGH4btE";
+    @Value("${KCK_ADMIN_USER}")
+    private String userConsole;
+    @Value("${KCK_ADMIN_PASSWORD}")
+    private String passwordConsole;
 
     public RealmResource getRealmResource(){
         Keycloak keycloak = KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm("master")
                 .clientId("admin-cli")
-                .username(USER_CONSOLE)
-                .password(PASSWORD_CONSOLE)
-                .clientSecret(CLIENT_SECRET)
+                .username(userConsole)
+                .password(passwordConsole)
+                .clientSecret("**********")
                 .resteasyClient(new ResteasyClientBuilderImpl()
                         .connectionPoolSize(10)
                         .build())
@@ -36,7 +36,7 @@ public class KeycloakProvider {
         return keycloak.realm(realmName);
     }
 
-    public static UsersResource getUserResource(){
+    public UsersResource getUserResource(){
         RealmResource realmResource = getRealmResource();
         return realmResource.users();
     }
