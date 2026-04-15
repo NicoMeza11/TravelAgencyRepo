@@ -17,4 +17,7 @@ public class UserDTO {
     private String lastName;
     private String password;
     private Set<String> roles;
+    private String phoneNumber;
+    private String documentId;
+    private String nationality;
 }

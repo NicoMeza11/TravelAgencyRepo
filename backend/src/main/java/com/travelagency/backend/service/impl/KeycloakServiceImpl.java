@@ -1,6 +1,7 @@
 package com.travelagency.backend.service.impl;
 
 import com.travelagency.backend.Controller.dto.UserDTO;
+import com.travelagency.backend.entities.UserEntity;
 import com.travelagency.backend.service.IKeycloakService;
 import com.travelagency.backend.util.KeycloakProvider;
 import jakarta.ws.rs.core.Response;
@@ -27,7 +28,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
     private final KeycloakProvider keycloakProvider;
 
     /**
-     * Metodo para listar todos los usuarios de Keycloak
+     * Method to list all users
      * @return List<UserRepresentation>
      */
     @Override
@@ -38,8 +39,8 @@ public class KeycloakServiceImpl implements IKeycloakService {
     }
 
     /**
-     * Metodo para buscar un usuario por su Username
-     * @param username Nombre del usuario a buscar
+     * Method to search a user by his username
+     * @param username Username of the user
      * @return List<UserRepresentation>
      */
     @Override
@@ -50,7 +51,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
     }
 
     /**
-     * Metodo para crear un usuario nuevo en Keycloak
+     * Method to create a new user in keycloak
      * @param userDTO
      * @return String
      */
@@ -103,7 +104,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
                     .realmLevel()
                     .add(roleRepresentations);
 
-            return "User created successfully";
+            return userId;
         } else if(status == 409){
             log.error("User exist already");
             return "User exist already";
@@ -114,7 +115,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
     }
 
     /**
-     * Metodo para borrar un usuario en Keycloak
+     * Method to delete a user in keycloak
      * @param userId Id del usuario
      */
     @Override
@@ -125,8 +126,8 @@ public class KeycloakServiceImpl implements IKeycloakService {
     }
 
     /**
-     * Metodo para actualizar un usuario
-     * @param userId Id del usuario
+     * Method to update a user
+     * @param userId id of the user
      * @param userDTO
      */
     @Override
