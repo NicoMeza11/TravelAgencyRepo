@@ -46,5 +46,20 @@ public class UserService {
         }
     }
 
-    public User
+    @Transactional
+    public void updateUserDb(String kcUserId, UserDTO userDTO){
+
+        UserEntity userEntity = userRepository.findById(kcUserId).orElseThrow(() -> new RuntimeException("User can't be found on DB"));
+        userEntity.setFirstName(userDTO.getFirstName());
+        userEntity.setLastName(userDTO.getLastName());
+        userEntity.setEmail(userDTO.getEmail());
+        userEntity.setPhoneNumber(userDTO.getPhoneNumber());
+        userEntity.setDocumentId(userDTO.getDocumentId());
+        userEntity.setNationality(userDTO.getNationality());
+        userEntity.setUserStatus(true);
+
+        userRepository.save(userEntity);
+
+        keycloakService.updateUser(kcUserId,userDTO);
+    }
 }

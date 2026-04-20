@@ -3,6 +3,8 @@ package com.travelagency.backend.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "TourismPackages")
 @Data
@@ -22,10 +24,10 @@ public class TourismPackageEntity {
     private String description;
 
     @Column(nullable = false)
-    private String startDate;
+    private Date startDate;
 
     @Column(nullable = false)
-    private String finishDate;
+    private Date finishDate;
 
     @Column(nullable = false)
     private int price;

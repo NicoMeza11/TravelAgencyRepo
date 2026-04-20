@@ -2,7 +2,9 @@ package com.travelagency.backend.service.impl;
 
 import com.travelagency.backend.Controller.dto.UserDTO;
 import com.travelagency.backend.entities.UserEntity;
+import com.travelagency.backend.repository.UserRepository;
 import com.travelagency.backend.service.IKeycloakService;
+import com.travelagency.backend.service.UserService;
 import com.travelagency.backend.util.KeycloakProvider;
 import jakarta.ws.rs.core.Response;
 import lombok.NonNull;
