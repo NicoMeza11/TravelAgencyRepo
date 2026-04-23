@@ -66,7 +66,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
         userRepresentation.setFirstName(userDTO.getFirstName());
         userRepresentation.setLastName(userDTO.getLastName());
         userRepresentation.setEmail(userDTO.getEmail());
-        userRepresentation.setUsername(userDTO.getUsername());
+        userRepresentation.setId(userDTO.getId());
         userRepresentation.setEmailVerified(true);
         userRepresentation.setEnabled(true);
 
@@ -144,7 +144,7 @@ public class KeycloakServiceImpl implements IKeycloakService {
         userRepresentation.setFirstName(userDTO.getFirstName());
         userRepresentation.setLastName(userDTO.getLastName());
         userRepresentation.setEmail(userDTO.getEmail());
-        userRepresentation.setUsername(userDTO.getUsername());
+        userRepresentation.setId(userDTO.getId());
         userRepresentation.setEmailVerified(true);
         userRepresentation.setEnabled(true);
         userRepresentation.setCredentials(Collections.singletonList(credentialRepresentation));

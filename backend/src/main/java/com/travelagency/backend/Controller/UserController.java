@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
+@CrossOrigin(origins="http://localhost:5173")
 public class UserController {
 
     private final UserService userService;
@@ -29,6 +30,12 @@ public class UserController {
         userService.updateUserDb(userId,userDTO);
 
         return ResponseEntity.ok("User updated successfully");
+    }
+
+    @PostMapping("/sync")
+    public ResponseEntity<?> saveUserDatabase(@RequestBody UserDTO userDTO){
+        userService.saveUserFromKeycloak(userDTO);
+        return ResponseEntity.ok().body("User saved in database successfully");
     }
 
 }

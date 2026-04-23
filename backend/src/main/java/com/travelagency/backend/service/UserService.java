@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -28,6 +30,7 @@ public class UserService {
 
         try{
             UserEntity userEntity = new UserEntity();
+
             userEntity.setId(keycloakUserId);
             userEntity.setFirstName(userDTO.getFirstName());
             userEntity.setLastName(userDTO.getLastName());
@@ -61,5 +64,27 @@ public class UserService {
         userRepository.save(userEntity);
 
         keycloakService.updateUser(kcUserId,userDTO);
+    }
+
+    public void saveUserFromKeycloak(UserDTO userDTO){
+        if(userRepository.existsById(userDTO.getId())){
+            log.info("User {} already exists in database, skipping save", userDTO.getId());
+            return;
+        }
+
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setId(userDTO.getId());
+        userEntity.setFirstName(userDTO.getFirstName());
+        userEntity.setLastName(userDTO.getLastName());
+        userEntity.setEmail(userDTO.getEmail());
+
+        userEntity.setPhoneNumber(null);
+        userEntity.setDocumentId(null);
+        userEntity.setNationality(null);
+        userEntity.setUserStatus(true);
+
+        userRepository.save(userEntity);
+        log.info("User {} synced from Keycloak to database", userDTO.getId());
     }
 }
