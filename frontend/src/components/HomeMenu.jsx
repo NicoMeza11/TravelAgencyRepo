@@ -5,6 +5,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import LuggageIcon from '@mui/icons-material/Luggage';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu'; 
@@ -106,6 +107,15 @@ function HomeMenu({onLogout}) {
               <MenuItem onClick={handleClose}>Mis Reservas</MenuItem>
               <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
             </Menu>
+
+            <IconButton
+              aria-label="packages"
+              sx={{position: 'absolute', bottom: 10, left: 650}}
+              color= "white"
+            >
+              <LuggageIcon/>
+            </IconButton>
+
           </div>
         </Toolbar>
       </AppBar>
@@ -119,7 +129,7 @@ function HomeMenu({onLogout}) {
 
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <Grow in={showFigure}>{testFigure}</Grow>
-        {/* Este aparece más lento gracias al timeout */}
+
         <Grow
           in={showFigure}
           style={{ transformOrigin: '0 0 0' }}
