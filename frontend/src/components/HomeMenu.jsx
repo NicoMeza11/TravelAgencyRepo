@@ -1,38 +1,41 @@
 import React, { useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import { useNavigate } from 'react-router-dom';
+import { 
+  AppBar, 
+  Box, 
+  Toolbar, 
+  Typography, 
+  IconButton, 
+  Drawer, 
+  List, 
+  ListItem, 
+  ListItemButton, 
+  ListItemIcon, 
+  ListItemText, 
+  Divider,
+  Menu,
+  MenuItem
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LuggageIcon from '@mui/icons-material/Luggage';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu'; 
 import './Menu.css';
 import Grow from '@mui/material/Grow';
 import Paper from '@mui/material/Paper';
 
-const testFigure = (
-  <Paper sx={{ m: 1, width: 100, height: 100 }} elevation={4}>
-    <svg width="100" height="100">
-      <Box
-        component="polygon"
-        points="0,100 50,00, 100,100"
-        sx={(theme) => ({
-          fill: theme.palette.common.white,
-          stroke: theme.palette.divider,
-          strokeWidth: 1,
-        })}
-      />
-    </svg>
-  </Paper>
-)
+
+const drawerWidth = 240
 
 function HomeMenu({onLogout}) { 
-  const [anchorEl, setAnchorEl] = useState(null);
-
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showFigure, setShowFigure] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleViewPackages = () => {
+    navigate('/packages');
+  }
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -42,10 +45,6 @@ function HomeMenu({onLogout}) {
     setAnchorEl(null);
   };
 
-  const saySomething = () => {
-    console.log("something");
-  };
-
   const handleLogout = () => {
     handleClose();
     if(onLogout){
@@ -53,9 +52,39 @@ function HomeMenu({onLogout}) {
     }
   }
 
-  const toggleFigure = () => {
-    setShowFigure((prev) => !prev);
+  const toggleSidebar = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return
+    }
+    setIsSidebarOpen(open)
   }
+
+  const SidebarContent = () => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleSidebar(false)}
+      onKeyDown={toggleSidebar(false)}
+    >
+        <Box sx={{ p: 2 }}>
+            <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+                User Menu
+            </Typography>
+        </Box>
+        <Divider />
+        <List>
+        
+        <ListItem disablePadding>
+          <ListItemButton onClick={handleViewPackages}>
+            <ListItemIcon><LuggageIcon /></ListItemIcon>
+            <ListItemText primary="View Packages" />
+          </ListItemButton>
+        </ListItem>
+
+      </List>
+      
+    </Box>
+  );
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -67,7 +96,7 @@ function HomeMenu({onLogout}) {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick = {toggleFigure}
+            onClick = {toggleSidebar(true)}
           >
             <MenuIcon />
           </IconButton>
@@ -108,36 +137,24 @@ function HomeMenu({onLogout}) {
               <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
             </Menu>
 
-            <IconButton
-              aria-label="packages"
-              sx={{position: 'absolute', bottom: 10, left: 650}}
-              color= "white"
-            >
-              <LuggageIcon/>
-            </IconButton>
-
           </div>
         </Toolbar>
       </AppBar>
 
+      <Drawer
+        anchor="left"
+        open={isSidebarOpen}
+        onClose={toggleSidebar(false)}
+      >
+        <SidebarContent />
+      </Drawer>
+
       <div id="menu" style={{ textAlign: 'center', marginTop: '40px' }}>
-        <h1 onClick={saySomething} style={{ cursor: 'pointer' }}>
+        <h1>
           Bienvenido a travelAgency
         </h1>
         <h2>¿A dónde desea viajar hoy?</h2>
       </div>
-
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
-        <Grow in={showFigure}>{testFigure}</Grow>
-
-        <Grow
-          in={showFigure}
-          style={{ transformOrigin: '0 0 0' }}
-          {...(testFigure ? { timeout: 1000 } : {})}
-        >
-          {testFigure}
-        </Grow>
-      </Box>
     
     </Box>
   );

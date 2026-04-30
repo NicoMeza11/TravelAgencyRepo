@@ -23,7 +23,7 @@ import LuggageIcon from '@mui/icons-material/Luggage'; // Para gestión de paque
 import LogoutIcon from '@mui/icons-material/Logout';
 
 
-const drawerWidth = 240 // Ancho del Drawer
+const drawerWidth = 240
 
 function AdminHomeMenu({onLogout}) {
 

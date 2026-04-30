@@ -6,6 +6,7 @@ import HomeMenu from './components/HomeMenu';
 import AdminHomeMenu from './components/AdminHomeMenu';
 import { useEffect, useRef } from 'react';
 import api from './ApiConf';
+import ListPackages from './pages/ListPackages';
 
 
 const DashboardAdmin = () => <div><h1>Panel de Administración</h1><p>Gestión de reservas y paquetes.</p></div>;
@@ -69,6 +70,7 @@ function App() {
         <Route path="/home" element={<ProtectedRoute requiredRole="user"><HomeMenu onLogout={() => keycloak.logout({redirectUri: window.location.origin})} /></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminHomeMenu onLogout={() => keycloak.logout({redirectUri: window.location.origin})} /></ProtectedRoute> } />
         <Route path="/no-autorizado" element={<NoAutorizado />} />
+        <Route path="/packages" element={<ProtectedRoute requiredRole="user"><ListPackages/></ProtectedRoute>}/>
         
         <Route path="/" element={<RootRedirect />} />
         <Route path="*" element={<Navigate to="/" replace />} />  
