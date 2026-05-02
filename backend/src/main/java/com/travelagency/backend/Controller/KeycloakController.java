@@ -27,12 +27,6 @@ public class KeycloakController {
         return ResponseEntity.ok(keycloakService.searchUserByUsername(username));
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createUser(@RequestBody UserDTO userDTO) throws URISyntaxException {
-        String response = keycloakService.createUser(userDTO);
-        return ResponseEntity.created(new URI("/keycloak/user/create")).body(response);
-    }
-
     @PutMapping("/update/{userId}")
     public ResponseEntity<?> updateUser(@RequestBody UserDTO userDTO, @PathVariable String userId){
 

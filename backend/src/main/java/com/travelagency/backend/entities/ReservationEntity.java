@@ -12,21 +12,18 @@ public class ReservationEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String idReservation;
+    private Long idReservation;
 
     @Column(nullable = false)
     private String idCustomer;
 
     @Column(nullable = false)
-    private String idPackage;
+    private Long idPackage;
 
     @Column(nullable = false)
     private Date date;
 
     @Column(nullable = false)
-    private int price;
-
-
-
+    private double price;
 
 }

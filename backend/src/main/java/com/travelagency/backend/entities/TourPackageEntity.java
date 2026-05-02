@@ -18,7 +18,7 @@ public class TourPackageEntity {
     @Column(nullable = false, length = 50)
     private String packageName;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String destination;
 
     @Column(nullable = false)
@@ -37,13 +37,13 @@ public class TourPackageEntity {
     private String urlImagen;
 
     @Column
-    private List<String> includedServices;
+    private String includedServices;
 
     @Column
-    private List<String> conditions;
+    private String conditions;
 
     @Column
-    private List<String> restrictions;
+    private String restrictions;
 
     @Column(nullable = false)
     private int spotsAvailable;
@@ -53,9 +53,6 @@ public class TourPackageEntity {
 
     @Column
     private String season;
-
-    @Column
-    private String category;
 
     @Column(nullable = false)
     private String packageStatus;
