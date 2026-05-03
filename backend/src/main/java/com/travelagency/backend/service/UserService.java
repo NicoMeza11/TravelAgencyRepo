@@ -20,6 +20,13 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User can't be found on DB"));
     }
 
+    private String cleanString(String input){
+        if(input == null || input.isBlank()){
+            return null;
+        }else{
+            return input.trim();
+        }
+    }
 
     @Transactional
     public void updateUserDb(String kcUserId, UserDTO userDTO){
@@ -28,9 +35,9 @@ public class UserService {
         userEntity.setFirstName(userDTO.getFirstName());
         userEntity.setLastName(userDTO.getLastName());
         userEntity.setEmail(userDTO.getEmail());
-        userEntity.setPhoneNumber(userDTO.getPhoneNumber());
-        userEntity.setDocumentId(userDTO.getDocumentId());
-        userEntity.setNationality(userDTO.getNationality());
+        userEntity.setPhoneNumber(cleanString(userDTO.getPhoneNumber()));
+        userEntity.setDocumentId(cleanString(userDTO.getDocumentId()));
+        userEntity.setNationality(cleanString(userDTO.getNationality()));
         userEntity.setUserStatus(true);
 
         userRepository.save(userEntity);

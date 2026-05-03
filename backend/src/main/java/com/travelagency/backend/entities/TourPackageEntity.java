@@ -34,6 +34,9 @@ public class TourPackageEntity {
     private double price;
 
     @Column
+    private double packageDiscount;
+
+    @Column
     private String urlImagen;
 
     @Column

@@ -7,5 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TourPackageRepository extends JpaRepository<TourPackageEntity, Long> {
 
-    TourPackageEntity findByIdPackage(Long id);
 }

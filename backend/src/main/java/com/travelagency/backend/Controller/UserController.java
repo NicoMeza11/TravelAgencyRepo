@@ -21,14 +21,14 @@ public class UserController {
 
     @PutMapping("/update/{userId}")
     public ResponseEntity<String> updateUser(@RequestBody UserDTO userDTO, @PathVariable String userId){
-        userService.updateUserDb(userId,userDTO);
+
+        System.out.println("Peticion recibida");
         try {
             userService.updateUserDb(userId, userDTO);
             System.out.println("----> Actualización exitosa");
             return ResponseEntity.ok("User updated successfully");
 
         } catch (Exception e) {
-            // 2. Si Keycloak o la BD fallan, lo atraparemos aquí y no devolverá un 404 falso
             System.err.println("----> ERROR EN BACKEND AL ACTUALIZAR: " + e.getMessage());
             e.printStackTrace(); // Esto imprimirá el error real en tu consola de Java
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());

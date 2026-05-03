@@ -1,25 +1,17 @@
 package com.travelagency.backend.service.impl;
 
 import com.travelagency.backend.Controller.dto.UserDTO;
-import com.travelagency.backend.entities.UserEntity;
-import com.travelagency.backend.repository.UserRepository;
 import com.travelagency.backend.service.IKeycloakService;
-import com.travelagency.backend.service.UserService;
 import com.travelagency.backend.util.KeycloakProvider;
-import jakarta.ws.rs.core.Response;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.OAuth2Constants;
-import org.keycloak.admin.client.resource.RealmResource;
 import org.keycloak.admin.client.resource.UserResource;
-import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -71,21 +63,26 @@ public class KeycloakServiceImpl implements IKeycloakService {
     @Override
     public void updateUser(String userId, @NonNull UserDTO userDTO) {
 
-        CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-        credentialRepresentation.setTemporary(false);
-        credentialRepresentation.setType(OAuth2Constants.PASSWORD);
-        credentialRepresentation.setValue(userDTO.getPassword());
+        UserResource userResource = keycloakProvider.getUserResource().get(userId);
 
-        UserRepresentation userRepresentation = new UserRepresentation();
+        //Update the personal information
+        UserRepresentation userRepresentation = userResource.toRepresentation();
         userRepresentation.setFirstName(userDTO.getFirstName());
         userRepresentation.setLastName(userDTO.getLastName());
-        userRepresentation.setEmail(userDTO.getEmail());
-        userRepresentation.setId(userDTO.getId());
-        userRepresentation.setEmailVerified(true);
-        userRepresentation.setEnabled(true);
-        userRepresentation.setCredentials(Collections.singletonList(credentialRepresentation));
 
-        UserResource userResource = keycloakProvider.getUserResource().get(userId);
-        userResource.update(userRepresentation);
+        userResource.update(userRepresentation); //We save the changes in keycloak
+
+        //The password is updated only if the DTO has one
+        if(userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()){
+            CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
+            credentialRepresentation.setTemporary(false);
+            credentialRepresentation.setType(OAuth2Constants.PASSWORD);
+            credentialRepresentation.setValue(userDTO.getPassword());
+
+            userResource.resetPassword(credentialRepresentation);
+        }
+
+
+
     }
 }

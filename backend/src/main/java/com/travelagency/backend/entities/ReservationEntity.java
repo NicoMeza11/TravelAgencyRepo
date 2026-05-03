@@ -21,9 +21,21 @@ public class ReservationEntity {
     private Long idPackage;
 
     @Column(nullable = false)
+    private int passengerQuantity;
+
+    @Column(nullable = false)
     private Date date;
 
     @Column(nullable = false)
-    private double price;
+    private double basePrice;
+
+    @Column(nullable = false)
+
+    private double discount;
+    @Column(nullable = false)
+    private double finalAmount;
+
+    @Column(nullable = false)
+    private String reservationStatus;
 
 }
