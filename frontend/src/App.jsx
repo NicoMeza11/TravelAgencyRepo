@@ -2,14 +2,16 @@ import { Routes, Route, Navigate, redirect } from 'react-router-dom';
 import keycloak from './keycloak';
 import ProtectedRoute from './components/ProtectedRoute'; 
 import LoginPage from './pages/LoginPage';
-import HomeMenu from './components/HomeMenu';
-import AdminHomeMenu from './components/AdminHomeMenu';
+import HomeMenu from './pages/HomeMenu';
+import AdminHomeMenu from './pages/AdminHomeMenu';
 import { useEffect, useRef } from 'react';
 import api from './ApiConf';
-import ListPackages from './pages/ListPackages';
+import ListPackages from './components/ListPackages';
+import Welcome from './components/Welcome';
+import UserProfile from './components/UserProfile';
+import Checkout from './components/Checkout';
 
 
-const DashboardAdmin = () => <div><h1>Panel de Administración</h1><p>Gestión de reservas y paquetes.</p></div>;
 const NoAutorizado = () => <div><h2>Error 403: No tienes permisos para ver esto.</h2></div>;
 
 const RootRedirect = () => {
@@ -67,7 +69,12 @@ function App() {
     <div>
       <Routes>
         <Route path="/login" element={keycloak.authenticated ? <Navigate to="/" replace /> : <LoginPage />} />
-        <Route path="/home" element={<ProtectedRoute requiredRole="user"><HomeMenu onLogout={() => keycloak.logout({redirectUri: window.location.origin})} /></ProtectedRoute>} />
+        <Route path="/home" element={<ProtectedRoute requiredRole="user"><HomeMenu onLogout={() => keycloak.logout({redirectUri: window.location.origin})} /></ProtectedRoute>} >
+          <Route index element={<Welcome />} />
+          <Route path="packages" element={<ListPackages/>} /> 
+          <Route path="profile" element={<UserProfile />} />
+          <Route path="checkout" element={<Checkout />} />
+        </Route>
         <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminHomeMenu onLogout={() => keycloak.logout({redirectUri: window.location.origin})} /></ProtectedRoute> } />
         <Route path="/no-autorizado" element={<NoAutorizado />} />
         <Route path="/packages" element={<ProtectedRoute requiredRole="user"><ListPackages/></ProtectedRoute>}/>

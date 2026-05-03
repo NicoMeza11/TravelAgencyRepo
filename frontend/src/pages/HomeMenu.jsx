@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import { 
   AppBar, 
   Box, 
@@ -34,7 +34,8 @@ function HomeMenu({onLogout}) {
   const navigate = useNavigate();
 
   const handleViewPackages = () => {
-    navigate('/packages');
+    navigate('/home/packages');
+    setIsSidebarOpen(false);
   }
 
   const handleMenu = (event) => {
@@ -68,7 +69,7 @@ function HomeMenu({onLogout}) {
     >
         <Box sx={{ p: 2 }}>
             <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
-                User Menu
+                Menu de usuario
             </Typography>
         </Box>
         <Divider />
@@ -77,7 +78,7 @@ function HomeMenu({onLogout}) {
         <ListItem disablePadding>
           <ListItemButton onClick={handleViewPackages}>
             <ListItemIcon><LuggageIcon /></ListItemIcon>
-            <ListItemText primary="View Packages" />
+            <ListItemText primary="Explorar Paquetes" />
           </ListItemButton>
         </ListItem>
 
@@ -132,7 +133,7 @@ function HomeMenu({onLogout}) {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
-              <MenuItem onClick={handleClose}>Mi Perfil</MenuItem>
+              <MenuItem onClick={() => {handleClose(); navigate('/home/profile');}}>Mi Perfil</MenuItem>
               <MenuItem onClick={handleClose}>Mis Reservas</MenuItem>
               <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
             </Menu>
@@ -149,12 +150,9 @@ function HomeMenu({onLogout}) {
         <SidebarContent />
       </Drawer>
 
-      <div id="menu" style={{ textAlign: 'center', marginTop: '40px' }}>
-        <h1>
-          Bienvenido a travelAgency
-        </h1>
-        <h2>¿A dónde desea viajar hoy?</h2>
-      </div>
+      <Box sx={{ p: 3 }}>
+        <Outlet /> 
+      </Box>
     
     </Box>
   );

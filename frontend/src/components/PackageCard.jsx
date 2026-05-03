@@ -4,6 +4,7 @@ import {
   Paper 
 } from '@mui/material';
 import { useState } from 'react';
+import ReservationForm from './ReservationForm';
 
 function PackageCard({ tourPackage }) {
 
@@ -34,7 +35,7 @@ function PackageCard({ tourPackage }) {
         </CardContent>
         <CardActions>
           <Button size="small" variant="contained" fullWidth onClick={handleOpen}>
-            View Details
+            Ver Detalles
           </Button>
         </CardActions>
       </Card>
@@ -42,7 +43,7 @@ function PackageCard({ tourPackage }) {
       <Dialog open={openDialog} onClose={handleClose} maxWidth="lg" fullWidth>
       
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
           {tourPackage.packageName}
         </Typography>
         <Button onClick={handleClose} color="error" sx={{ minWidth: 'auto' }}>
@@ -69,32 +70,17 @@ function PackageCard({ tourPackage }) {
             />
           </Grid>
 
-          {/* RIGHT COLUMN: The Information & Booking Widget (Takes 5 out of 12 columns) */}
           <Grid item xs={12} md={5}>
             
-            {/* THE "FLOATING" BOOKING WIDGET */}
-            <Paper elevation={4} sx={{ p: 3, mb: 4, borderRadius: 3, border: '1px solid #e0e0e0' }}>
-              <Typography variant="h4" color="primary.main" sx={{ fontWeight: 'bold' }}>
-                ${tourPackage.price} <Typography component="span" variant="body1" color="text.secondary">USD</Typography>
-              </Typography>
-              <Typography variant="body2" color={tourPackage.spotsAvailable > 5 ? "success.main" : "error.main"} sx={{ mb: 2 }}>
-                {tourPackage.spotsAvailable} spots available
-              </Typography>
-              
-              <Button 
-                variant="contained" 
-                color="primary" 
-                size="large" 
-                fullWidth 
-                disabled={tourPackage.spotsAvailable <= 0}
-              >
-                Proceed to Booking
-              </Button>
-            </Paper>
+            <ReservationForm 
+              packageId={tourPackage.idPackage} // Usa el nombre exacto de tu id
+              price={tourPackage.price} 
+              spotsAvailable={tourPackage.spotsAvailable} 
+            />
 
             {/* THE DETAILS TEXT */}
             <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-              About this trip
+              Acerca de este viaje
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
               {tourPackage.description}
@@ -102,21 +88,21 @@ function PackageCard({ tourPackage }) {
             
             <Divider sx={{ my: 2 }} />
             
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>✅ Included Services</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> Servicios inlcuidos</Typography>
             <Typography variant="body2" paragraph color="text.secondary">
               {tourPackage.includedServices}
             </Typography>
 
             <Divider sx={{ my: 2 }} />
 
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>⚠️ Important Conditions</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> Condiciones importantes</Typography>
             <Typography variant="body2" paragraph color="text.secondary">
               {tourPackage.conditions}
             </Typography>
 
             <Divider sx={{ my: 2 }} />
 
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>🚫 Restrictions</Typography>
+            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> Restricciones</Typography>
             <Typography variant="body2" paragraph color="text.secondary">
               {tourPackage.restrictions}
             </Typography>
@@ -127,7 +113,6 @@ function PackageCard({ tourPackage }) {
     </Dialog>
     
     </>
-
 
 
   );
