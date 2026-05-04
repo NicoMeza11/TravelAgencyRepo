@@ -102,7 +102,7 @@ const CreatePackageForm = () => {
             <TextField fullWidth type="number" inputProps={{ step: "0.01" }} label="Precio (USD)" name="price" value={formData.price} onChange={handleChange} required />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth type="number" inputProps={{ step: "0.01"}} label="Descuento (Decimales)" name="packageDiscount" value={FormData.packageDiscount} onChange={handleChange} />
+            <TextField fullWidth type="number" inputProps={{ step: "0.01"}} label="Descuento (Decimales)" name="packageDiscount" value={formData.packageDiscount} onChange={handleChange} />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField fullWidth type="number" label="Cupos disponibles" name="spotsAvailable" value={formData.spotsAvailable} onChange={handleChange} required />

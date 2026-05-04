@@ -38,6 +38,11 @@ function HomeMenu({onLogout}) {
     setIsSidebarOpen(false);
   }
 
+  const handleViewReservations = () => {
+    handleClose();
+    navigate('/home/reservations');
+  }
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -134,7 +139,7 @@ function HomeMenu({onLogout}) {
               onClose={handleClose}
             >
               <MenuItem onClick={() => {handleClose(); navigate('/home/profile');}}>Mi Perfil</MenuItem>
-              <MenuItem onClick={handleClose}>Mis Reservas</MenuItem>
+              <MenuItem onClick={handleViewReservations}>Mis Reservas</MenuItem>
               <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
             </Menu>
 

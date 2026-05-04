@@ -23,6 +23,9 @@ public class PaymentEntity {
     @Column(nullable = false)
     private String paymentMethod;
 
+    @Column(nullable = false)
+    private String paymentStatus;
+
     @OneToOne
     @JoinColumn(name = "id_reservation", nullable = false)
     private ReservationEntity reservation;

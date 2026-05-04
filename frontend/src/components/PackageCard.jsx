@@ -73,7 +73,7 @@ function PackageCard({ tourPackage }) {
           <Grid item xs={12} md={5}>
             
             <ReservationForm 
-              packageId={tourPackage.idPackage} // Usa el nombre exacto de tu id
+              packageId={tourPackage.idPackage} 
               price={tourPackage.price} 
               spotsAvailable={tourPackage.spotsAvailable} 
             />

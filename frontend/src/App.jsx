@@ -10,6 +10,7 @@ import ListPackages from './components/ListPackages';
 import Welcome from './components/Welcome';
 import UserProfile from './components/UserProfile';
 import Checkout from './components/Checkout';
+import UserReservations from './components/UserReservations';
 
 
 const NoAutorizado = () => <div><h2>Error 403: No tienes permisos para ver esto.</h2></div>;
@@ -74,6 +75,7 @@ function App() {
           <Route path="packages" element={<ListPackages/>} /> 
           <Route path="profile" element={<UserProfile />} />
           <Route path="checkout" element={<Checkout />} />
+          <Route path="reservations" element={<UserReservations />} />
         </Route>
         <Route path="/admin" element={<ProtectedRoute requiredRole="admin"><AdminHomeMenu onLogout={() => keycloak.logout({redirectUri: window.location.origin})} /></ProtectedRoute> } />
         <Route path="/no-autorizado" element={<NoAutorizado />} />

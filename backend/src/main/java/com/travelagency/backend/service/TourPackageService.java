@@ -1,6 +1,7 @@
 package com.travelagency.backend.service;
 
 import com.travelagency.backend.entities.TourPackageEntity;
+import com.travelagency.backend.repository.ReservationRepository;
 import com.travelagency.backend.repository.TourPackageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +15,18 @@ import java.util.List;
 public class TourPackageService {
 
     private final TourPackageRepository packageRepository;
+    private final ReservationRepository reservationRepository;
 
     private void validateBusinessRules(TourPackageEntity packageEntity){
+
+        if(packageEntity.getPackageName() == null || packageEntity.getPackageName().trim().isEmpty() ||
+                packageEntity.getDestination() == null || packageEntity.getDestination().trim().isEmpty() ||
+                packageEntity.getDescription() == null || packageEntity.getDescription().trim().isEmpty() ||
+                packageEntity.getStartDate() == null ||
+                packageEntity.getFinishDate() == null){
+            throw new IllegalArgumentException("Name, destination, description, dates are mandatory fields");
+        }
+
         if(packageEntity.getPrice() <= 0){
             throw new IllegalArgumentException("The price must be greater than zero");
         }
@@ -33,7 +44,7 @@ public class TourPackageService {
             throw new IllegalArgumentException("A package cannot be published as ACTIVE if there is not spots available");
         }
 
-        if("SOLD OUT".equalsIgnoreCase(packageEntity.getPackageStatus()) && packageEntity.getSpotsAvailable() > 0){
+        if("SOLD_OUT".equalsIgnoreCase(packageEntity.getPackageStatus()) && packageEntity.getSpotsAvailable() > 0){
             throw new IllegalArgumentException("A package cannot be published as SOLD OUT if there still spots available");
         }
     }
@@ -64,6 +75,16 @@ public class TourPackageService {
         TourPackageEntity existingPackage = packageRepository.findById(idPackage)
                 .orElseThrow(() -> new RuntimeException(("Package not found with id:" + idPackage)));
 
+        boolean hasReservations = !reservationRepository.findByIdPackage(idPackage).isEmpty();
+
+        if (hasReservations) {
+            if (!existingPackage.getStartDate().equals(updatedPackage.getStartDate()) ||
+                    !existingPackage.getFinishDate().equals(updatedPackage.getFinishDate())) {
+                throw new RuntimeException("Cannot modify date of a package with reservations");
+            }
+        }
+
+        //we build and update the package
         existingPackage.setPackageName(updatedPackage.getPackageName());
         existingPackage.setDestination(updatedPackage.getDestination());
         existingPackage.setDescription(updatedPackage.getDescription());
@@ -71,6 +92,7 @@ public class TourPackageService {
         existingPackage.setFinishDate(updatedPackage.getFinishDate());
         existingPackage.setPrice(updatedPackage.getPrice());
         existingPackage.setSpotsAvailable(updatedPackage.getSpotsAvailable());
+        existingPackage.setPackageDiscount(updatedPackage.getPackageDiscount());
         existingPackage.setUrlImagen(updatedPackage.getUrlImagen());
         existingPackage.setIncludedServices(updatedPackage.getIncludedServices());
         existingPackage.setConditions(updatedPackage.getConditions());
@@ -78,8 +100,11 @@ public class TourPackageService {
         existingPackage.setTravelType(updatedPackage.getTravelType());
         existingPackage.setSeason(updatedPackage.getSeason());
 
+        existingPackage.setPackageStatus(updatedPackage.getPackageStatus());
+
         validateBusinessRules(existingPackage); //we validate de business rules of the updates package
 
         return packageRepository.save(existingPackage);
     }
+
 }

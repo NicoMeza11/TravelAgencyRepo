@@ -19,12 +19,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AssessmentIcon from '@mui/icons-material/Assessment'; 
-import AddCircleIcon from '@mui/icons-material/AddCircle'; // Icono nuevo para crear
+import AddCircleIcon from '@mui/icons-material/AddCircle'; 
 import LuggageIcon from '@mui/icons-material/Luggage'; 
 import LogoutIcon from '@mui/icons-material/Logout';
 
 import AdminPackageList from '../components/AdminPackageList';
 import CreatePackageForm from '../components/CreatePackageForm';
+import AdminReservations from '../components/AdminReservations';
 
 
 const drawerWidth = 240
@@ -69,6 +70,8 @@ function AdminHomeMenu({onLogout}) {
                 return <AdminPackageList />
             case 'createPackage':
                 return <CreatePackageForm />
+            case 'admReservations':
+                return <AdminReservations />
             case 'dashboard':
             default:
                 return(
@@ -118,9 +121,9 @@ function AdminHomeMenu({onLogout}) {
             </ListItem>
 
             <ListItem disablePadding>
-                <ListItemButton onClick={() => changeView('reports')}>
+                <ListItemButton onClick={() => changeView('admReservations')}>
                     <ListItemIcon><AssessmentIcon /></ListItemIcon>
-                    <ListItemText primary="Reporte de ventas" />
+                    <ListItemText primary="Administrar Reservas" />
                 </ListItemButton>
             </ListItem>
         </List>

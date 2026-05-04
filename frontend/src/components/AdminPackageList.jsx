@@ -56,6 +56,7 @@ const AdminPackageList = () => {
 
         ...editFormData,
         price: parseFloat(editFormData.price),
+        packageDiscount: parseFloat(editFormData.packageDiscount),
         spotsAvailable: parseInt(editFormData.spotsAvailable)
       });
 
@@ -176,6 +177,9 @@ const AdminPackageList = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <TextField fullWidth type="number" label="Cupos disponibles" name="spotsAvailable" value={editFormData.spotsAvailable} onChange={handleEditChange} />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField fullWidth type="number" label="Descuento del paquete" name="packageDiscount" value={editFormData.packageDiscount} onChange={handleEditChange} />
               </Grid>
               <Grid item xs={12}>
                 <TextField fullWidth label="URL de imagen" name="urlImagen" value={editFormData.urlImagen} onChange={handleEditChange} />

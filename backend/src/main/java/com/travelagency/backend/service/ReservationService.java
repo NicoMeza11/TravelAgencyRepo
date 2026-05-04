@@ -2,8 +2,10 @@ package com.travelagency.backend.service;
 
 import com.travelagency.backend.Controller.dto.ReservationRequestDTO;
 import com.travelagency.backend.Controller.dto.ReservationResponseDTO;
+import com.travelagency.backend.entities.PaymentEntity;
 import com.travelagency.backend.entities.ReservationEntity;
 import com.travelagency.backend.entities.TourPackageEntity;
+import com.travelagency.backend.repository.PaymentRepository;
 import com.travelagency.backend.repository.ReservationRepository;
 import com.travelagency.backend.repository.TourPackageRepository;
 import jakarta.transaction.Transactional;
@@ -12,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-
-import static java.lang.Math.round;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,11 +23,12 @@ import static java.lang.Math.round;
 public class ReservationService {
 
     private final ReservationRepository reservationRepo;
+    private final TourPackageRepository tourPackageRepository;
+    private final PaymentRepository paymentRepository;
 
     private static final double  GROUP_DISCOUNT_PERCENTAGE = 0.1; //10% discount for 4+ passengers
     private static final double FREQUENT_CLIENT_DISCOUNT_PERCENTAGE = 0.05; //5% discount for frequent client
     private static final double MAX_DISCOUNT_ALLOWED = 0.20; // 20% = mas discount allowed
-    private final TourPackageRepository tourPackageRepository;
 
     @Transactional
     public ReservationResponseDTO createReservation(ReservationRequestDTO requestDTO){
@@ -51,6 +54,9 @@ public class ReservationService {
 
         //We substract availables spots to the package
         tourPackage.setSpotsAvailable(tourPackage.getSpotsAvailable() - requestDTO.getPassengerQuantity());
+        if(tourPackage.getSpotsAvailable() == 0){
+            tourPackage.setPackageStatus("SOLD_OUT");
+        }
         tourPackageRepository.save(tourPackage);
 
         double packagePrice = tourPackage.getPrice();
@@ -59,6 +65,7 @@ public class ReservationService {
 
         if(requestDTO.getPassengerQuantity() >= 4){
             totalDiscount += GROUP_DISCOUNT_PERCENTAGE;
+            System.out.println("Group discount activated");
         }
 
         if(tourPackage.getPackageDiscount() > 0){
@@ -71,10 +78,12 @@ public class ReservationService {
 
         if(paidReservationsCount >= 3){
             totalDiscount += FREQUENT_CLIENT_DISCOUNT_PERCENTAGE;
+            System.out.println("Frequent client discount activated");
         }
 
         if(totalDiscount > MAX_DISCOUNT_ALLOWED){
             totalDiscount = MAX_DISCOUNT_ALLOWED;
+            log.info("Total discount: {} exceeds max, setting discount to 20%", totalDiscount);
         }
 
         basePrice = basePrice - (basePrice*totalDiscount);
@@ -104,6 +113,52 @@ public class ReservationService {
                 savedReservation.getFinalAmount(),
                 savedReservation.getReservationStatus()
         );
+    }
+
+    public List<ReservationEntity> getAllReservation(){
+        return reservationRepo.findAll();
+    }
+
+    public List<ReservationEntity> getAllReservationUser(String userId){
+        return reservationRepo.findByIdCustomer(userId);
+    }
+
+    @Transactional
+    public void cancelReservation(Long reservationId){
+
+        ReservationEntity reservation = reservationRepo.findById(reservationId)
+                        .orElseThrow(() -> new RuntimeException("Cannot found reservation with id: "+ reservationId));
+
+        if("CANCELLED".equals(reservation.getReservationStatus())){
+            throw new RuntimeException("Reservation is already cancelled");
+        }
+
+        TourPackageEntity tourPackage = tourPackageRepository.findById(reservation.getIdPackage())
+                        .orElseThrow(() -> new RuntimeException("Cannot found package with id: "+ reservation.getIdPackage()));
+
+        int newSpots = reservation.getPassengerQuantity() + tourPackage.getSpotsAvailable();
+        tourPackage.setSpotsAvailable(newSpots); //we replace the spots available
+
+
+        if("SOLD_OUT".equals(tourPackage.getPackageStatus()) && newSpots > 0){
+            tourPackage.setPackageStatus("ACTIVE");
+        }
+        tourPackageRepository.save(tourPackage);
+
+        reservation.setReservationStatus("CANCELLED");
+        reservationRepo.save(reservation);
+
+        Optional<PaymentEntity> paymentOpt = paymentRepository.findPaymentEntityByReservation(reservation);
+        if(paymentOpt.isPresent()){
+            PaymentEntity payment = paymentOpt.get();
+            payment.setPaymentStatus("REFUNDED");
+            paymentRepository.save(payment);
+            System.out.println("Payment refunded");
+        }else{
+            log.info("The reservation did not has a payment associated");
+        }
+
+        log.info("Reservation with id {} cancelled successfully", reservationId);
     }
 
 }

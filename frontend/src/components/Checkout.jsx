@@ -17,7 +17,7 @@ function Checkout() {
         cardNumber: '',
         expirationDate: '',
         cvv: '',
-        paymentMethod: 'CREDIT_CARD'
+        paymentMethod: 'CREDIT_CARD',
     });
     
     const [loading, setLoading] = useState(false);
@@ -44,7 +44,7 @@ function Checkout() {
             await api.post('/payment/save', paymentRequestDTO);
             setSuccess(true);
             setTimeout(() => {
-                navigate('/my-reservations'); // Redirigir después de 3 segundos
+                navigate('/my-reservations'); // Redirect after 3 seconds
             }, 3000);
         } catch (error) {
             console.error("Error en el pago", error);

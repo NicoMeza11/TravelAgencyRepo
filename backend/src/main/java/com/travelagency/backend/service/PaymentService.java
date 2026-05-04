@@ -38,6 +38,7 @@ public class PaymentService {
         payment.setPaymentDate(new Date());
         payment.setPaymentMethod(requestDTO.getPaymentMethod());
         payment.setReservation(reservation);
+        payment.setPaymentStatus("APPROVED");
 
         PaymentEntity savedPayment = paymentRepo.save(payment);
 
