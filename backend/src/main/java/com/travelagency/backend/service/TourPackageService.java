@@ -60,6 +60,11 @@ public class TourPackageService {
         return packageRepository.findAll();
     }
 
+    public TourPackageEntity getPackageById(Long idPackage){
+        return packageRepository.findById(idPackage)
+                .orElseThrow(() -> new RuntimeException("Package not found"));
+    }
+
     public TourPackageEntity changeStatusPackage(String newStatus, Long idPackage){
         TourPackageEntity tourPackage = packageRepository.findById(idPackage)
                         .orElseThrow(() -> new RuntimeException("Package not found with id: " + idPackage));

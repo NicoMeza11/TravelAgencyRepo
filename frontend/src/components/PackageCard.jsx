@@ -1,24 +1,13 @@
-import { 
-  Card, CardMedia, CardContent, Typography, Button, CardActions, Chip, Box,
-  Dialog, DialogTitle, DialogContent, DialogActions, Divider, List, ListItem, ListItemText, Grid,
-  Paper 
-} from '@mui/material';
+import { Card, CardMedia, CardContent, Typography, Button, CardActions } from '@mui/material';
 import { useState } from 'react';
-import ReservationForm from './ReservationForm';
+import PackageDetailsModal from './PackageDetailsModal'; 
 
 function PackageCard({ tourPackage }) {
-
   const [openDialog, setOpenDialog] = useState(false);
 
-  const handleOpen = () => {
-    setOpenDialog(true);
-  }
+  const handleOpen = () => setOpenDialog(true);
+  const handleClose = () => setOpenDialog(false);
 
-  const handleClose = () => {
-    setOpenDialog(false);
-  }
-
-  
   return (
     <>
       <Card sx={{ maxWidth: 345, m: 2 }}>
@@ -40,81 +29,12 @@ function PackageCard({ tourPackage }) {
         </CardActions>
       </Card>
 
-      <Dialog open={openDialog} onClose={handleClose} maxWidth="lg" fullWidth>
-      
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-          {tourPackage.packageName}
-        </Typography>
-        <Button onClick={handleClose} color="error" sx={{ minWidth: 'auto' }}>
-          Close
-        </Button>
-      </DialogTitle>
-
-      <DialogContent dividers>
-        <Grid container spacing={4}>
-          
-          {/* LEFT COLUMN: The Image (Takes 7 out of 12 columns on desktop) */}
-          <Grid item xs={12} md={7}>
-            <Box
-              component="img"
-              src={tourPackage.urlImagen || "https://via.placeholder.com/800"}
-              alt={tourPackage.packageName}
-              sx={{ 
-                width: '100%', 
-                height: '100%', 
-                minHeight: '400px',
-                objectFit: 'cover', 
-                borderRadius: 2 
-              }}
-            />
-          </Grid>
-
-          <Grid item xs={12} md={5}>
-            
-            <ReservationForm 
-              packageId={tourPackage.idPackage} 
-              price={tourPackage.price} 
-              spotsAvailable={tourPackage.spotsAvailable} 
-            />
-
-            {/* THE DETAILS TEXT */}
-            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
-              Acerca de este viaje
-            </Typography>
-            <Typography variant="body1" color="text.secondary" paragraph>
-              {tourPackage.description}
-            </Typography>
-            
-            <Divider sx={{ my: 2 }} />
-            
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> Servicios inlcuidos</Typography>
-            <Typography variant="body2" paragraph color="text.secondary">
-              {tourPackage.includedServices}
-            </Typography>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> Condiciones importantes</Typography>
-            <Typography variant="body2" paragraph color="text.secondary">
-              {tourPackage.conditions}
-            </Typography>
-
-            <Divider sx={{ my: 2 }} />
-
-            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}> Restricciones</Typography>
-            <Typography variant="body2" paragraph color="text.secondary">
-              {tourPackage.restrictions}
-            </Typography>
-
-          </Grid>
-        </Grid>
-      </DialogContent>
-    </Dialog>
-    
+      <PackageDetailsModal 
+        open={openDialog} 
+        onClose={handleClose} 
+        tourPackage={tourPackage} 
+      />
     </>
-
-
   );
 }
 

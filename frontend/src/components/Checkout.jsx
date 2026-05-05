@@ -70,7 +70,7 @@ function Checkout() {
                 </Box>
             ) : (
                 <Grid container spacing={4}>
-                    {/* COLUMNA IZQUIERDA: Resumen de Compra */}
+                    {/* Purchase Summary */}
                     <Grid item xs={12} md={5}>
                         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                             Resumen de tu Reserva
@@ -99,7 +99,7 @@ function Checkout() {
                         </Paper>
                     </Grid>
 
-                    {/* COLUMNA DERECHA: Formulario de Pago */}
+                    {/* Payment Form */}
                     <Grid item xs={12} md={7}>
                         <Typography variant="h5" gutterBottom sx={{ fontWeight: 'bold' }}>
                             Información de Pago

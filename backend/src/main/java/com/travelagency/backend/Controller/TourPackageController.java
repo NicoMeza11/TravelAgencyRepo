@@ -22,6 +22,11 @@ public class TourPackageController {
         return packageService.getAllPackages();
     }
 
+    @GetMapping("/{idPackage}")
+    public TourPackageEntity getPackageById(@PathVariable Long idPackage){
+        return packageService.getPackageById(idPackage);
+    }
+
     @PostMapping("/save")
     public ResponseEntity<TourPackageEntity> savePackage(@RequestBody TourPackageEntity packageEntity){
         TourPackageEntity savedPackage = packageService.savePackage(packageEntity);

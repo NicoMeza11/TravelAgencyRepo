@@ -86,8 +86,8 @@ public class ReservationService {
             log.info("Total discount: {} exceeds max, setting discount to 20%", totalDiscount);
         }
 
-        basePrice = basePrice - (basePrice*totalDiscount);
-        double finalAmount = Math.round(basePrice * 100.0)/100.0;
+        double moneyDiscounted = (basePrice*totalDiscount);
+        double finalAmount = Math.round((basePrice - moneyDiscounted) * 100.0)/100.0;
 
         //Build and save the reservation
         ReservationEntity reservation = new ReservationEntity();

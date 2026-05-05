@@ -23,9 +23,8 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import LuggageIcon from '@mui/icons-material/Luggage'; 
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import AdminPackageList from '../components/AdminPackageList';
-import CreatePackageForm from '../components/CreatePackageForm';
-import AdminReservations from '../components/AdminReservations';
+import UserProfile from '../components/UserProfile';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 
 const drawerWidth = 240
@@ -34,7 +33,33 @@ function AdminHomeMenu({onLogout}) {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-    const [activeView, setActiveView] = useState('dashboard');
+
+    const navigate = useNavigate();
+
+    const handleViewDashboard = () => {
+        navigate('/admin/dashboard');
+        setIsSidebarOpen(false);
+    }
+
+    const handleViewPackageList = () => {
+        navigate('/admin/packages');
+        setIsSidebarOpen(false);
+    }
+
+    const handleViewCreatePackage = () => {
+        navigate('/admin/create/package');
+        setIsSidebarOpen(false);
+    }
+
+    const handleViewReservations = () => {
+        navigate('/admin/reservations');
+        setIsSidebarOpen(false);
+    }
+
+    const handleViewProfile = () => {
+        navigate('/admin/profile');
+        setIsSideBarOpen(false);
+    }
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget)
@@ -58,33 +83,6 @@ function AdminHomeMenu({onLogout}) {
         setIsSidebarOpen(open)
     }
 
-    const changeView = (viewName) => {
-        setActiveView(viewName);
-        setIsSidebarOpen(false);
-    }
-
-    const renderContent = () => {
-
-        switch(activeView){
-            case 'listPackages':
-                return <AdminPackageList />
-            case 'createPackage':
-                return <CreatePackageForm />
-            case 'admReservations':
-                return <AdminReservations />
-            case 'dashboard':
-            default:
-                return(
-                    <>
-                        <Typography variant='h4'>Bienvenido, Administrador</Typography>
-                        <Typography variant='body1' sx={{ mt:2 }}>
-                            Seleccione una opción de la barra lateral para administrar los paquetes
-                        </Typography>
-                    </>
-                );
-        }
-    };
-
     const SidebarContent = () => (
         <Box
         sx={{ width: 250 }}
@@ -100,28 +98,28 @@ function AdminHomeMenu({onLogout}) {
             <Divider />
             <List>
             <ListItem disablePadding>
-                <ListItemButton onClick={() => changeView('dashboard')}>
+                <ListItemButton onClick={handleViewDashboard}>
                     <ListItemIcon><DashboardIcon /></ListItemIcon>
                     <ListItemText primary="Dashboard" />
                 </ListItemButton>
             </ListItem>
             
             <ListItem disablePadding>
-                <ListItemButton onClick={() => changeView('listPackages')}>
+                <ListItemButton onClick={handleViewPackageList}>
                     <ListItemIcon><LuggageIcon /></ListItemIcon>
                     <ListItemText primary="Administrar Paquetes" />
                 </ListItemButton>
             </ListItem>
 
             <ListItem disablePadding>
-                <ListItemButton onClick={() => changeView('createPackage')}>
+                <ListItemButton onClick={handleViewCreatePackage}>
                     <ListItemIcon><AddCircleIcon /></ListItemIcon>
                     <ListItemText primary="Crear Paquete" />
                 </ListItemButton>
             </ListItem>
 
             <ListItem disablePadding>
-                <ListItemButton onClick={() => changeView('admReservations')}>
+                <ListItemButton onClick={handleViewReservations}>
                     <ListItemIcon><AssessmentIcon /></ListItemIcon>
                     <ListItemText primary="Administrar Reservas" />
                 </ListItemButton>
@@ -186,7 +184,7 @@ function AdminHomeMenu({onLogout}) {
                             open={Boolean(anchorEl)}
                             onClose={handleCloseUserMenu}
                         >
-                            <MenuItem onClick={handleCloseUserMenu}>Perfil</MenuItem>
+                            <MenuItem onClick={() => {handleCloseUserMenu(); navigate('/admin/profile')}}>Perfil</MenuItem>
                             <MenuItem onClick={handleCloseUserMenu}>Mi cuenta</MenuItem>
                             <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
 
@@ -206,7 +204,7 @@ function AdminHomeMenu({onLogout}) {
             
             {/* Principal area of content of the Dashboard*/}
             <Box sx = {{p: 3}}>
-                {renderContent()}
+                <Outlet />
             </Box>
 
         </Box>

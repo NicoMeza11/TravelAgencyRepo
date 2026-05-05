@@ -22,40 +22,6 @@ public class KeycloakServiceImpl implements IKeycloakService {
     private final KeycloakProvider keycloakProvider;
 
     /**
-     * Method to list all users
-     * @return List<UserRepresentation>
-     */
-    @Override
-    public List<UserRepresentation> findAllUser() {
-        return keycloakProvider.getRealmResource()
-                .users()
-                .list();
-    }
-
-    /**
-     * Method to search a user by his username
-     * @param username Username of the user
-     * @return List<UserRepresentation>
-     */
-    @Override
-    public List<UserRepresentation> searchUserByUsername(String username) {
-        return keycloakProvider.getRealmResource()
-                .users()
-                .searchByUsername(username, true);
-    }
-
-    /**
-     * Method to delete a user in keycloak
-     * @param userId Id del usuario
-     */
-    @Override
-    public void deleteUser(String userId) {
-        keycloakProvider.getUserResource()
-                .get(userId)
-                .remove();
-    }
-
-    /**
      * Method to update a user
      * @param userId id of the user
      * @param userDTO
