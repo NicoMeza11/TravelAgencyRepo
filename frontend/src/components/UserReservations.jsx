@@ -23,19 +23,35 @@ const printStyles = `
       width: 100%;
       padding: 20px;
     }
-    /* Ocultamos los botones del modal al imprimir */
     .no-print {
       display: none !important;
     }
   }
 `;
 
+const PackageNameLabel = ({ idPackage }) => {
+    const [name, setName] = useState('Cargando nombre...');
+
+    useEffect(() => {
+        const fetchName = async () => {
+            try {
+                const response = await api.get(`/tourpackage/${idPackage}`);
+                setName(response.data.packageName); 
+            } catch (error) {
+                setName(`Paquete ID: ${idPackage}`); 
+            }
+        };
+        fetchName();
+    }, [idPackage]);
+
+    return <span>{name}</span>;
+};
+
 const UserReservations = () => {
     const [reservations, setReservations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     
-    // Estados para manejar el Modal del Comprobante
     const [openModal, setOpenModal] = useState(false);
     const [selectedReceipt, setSelectedReceipt] = useState(null);
 
@@ -52,7 +68,7 @@ const UserReservations = () => {
 
             try{
                 const response = await api.get(`/reservation/user/${userId}`);
-                setReservations(response.data ? response.data : []); 
+                setReservations(response.data ? response.data : []);
             }catch(error){
                 console.error("Error loading reservations", error);
                 setError("Hubo un error al cargar sus reservas");
@@ -83,7 +99,6 @@ const UserReservations = () => {
         }
     }
 
-    // Funciones para el Modal
     const handleOpenReceipt = (res) => {
         setSelectedReceipt(res);
         setOpenModal(true);
@@ -143,7 +158,7 @@ const UserReservations = () => {
                                 <Typography variant="h6" color="primary">
                                     Reserva #{res.idReservation}
                                 </Typography>
-                                <Typography><strong>Paquete ID:</strong> {res.idPackage}</Typography>
+                                <Typography><strong>Paquete:</strong> <PackageNameLabel idPackage={res.idPackage} /></Typography>
                                 <Typography><strong>Pasajeros:</strong> {res.passengerQuantity}</Typography>                    
                                 <Typography>
                                     <strong>Estado:</strong> {res.reservationStatus} 
@@ -152,7 +167,6 @@ const UserReservations = () => {
 
                             <Box display="flex" flexDirection="column" gap={1} minWidth="150px">        
                                 
-                                {/* REEMPLAZO: Mostrar Comprobante en lugar de Ver Paquete si está Confirmada */}
                                 {res.reservationStatus === 'CONFIRMED' && (
                                     <Button 
                                         variant="contained" 
@@ -206,6 +220,33 @@ const UserReservations = () => {
                 tourPackage={selectedPackage} 
                 hideReservationForm={true} 
             />
+            <Dialog open={openModal} onClose={handleCloseReceipt} maxWidth="sm" fullWidth>
+                <div id="printable-receipt">
+                    <DialogTitle>Comprobante de Reserva</DialogTitle>
+                    <DialogContent dividers>
+                        {selectedReceipt && (
+                            <Box display="flex" flexDirection="column" gap={1}>
+                                <Typography variant="h6" color="primary">
+                                    Detalles de la Reserva #{selectedReceipt.idReservation}
+                                </Typography>
+                                <Divider />
+                                <Typography><strong>Paquete:</strong> <PackageNameLabel idPackage={selectedReceipt.idPackage} /></Typography>
+                                <Typography><strong>Cantidad de Pasajeros:</strong> {selectedReceipt.passengerQuantity}</Typography>
+                                <Typography><strong>Estado:</strong> {selectedReceipt.reservationStatus}</Typography>
+                            </Box>
+                        )}
+                    </DialogContent>
+                </div>
+                
+                <DialogActions className="no-print">
+                    <Button onClick={handleCloseReceipt} color="inherit">
+                        Cerrar
+                    </Button>
+                    <Button onClick={handlePrint} variant="contained" color="primary">
+                        Imprimir / Guardar PDF
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };

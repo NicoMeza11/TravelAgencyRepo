@@ -3,7 +3,7 @@ import {
     Container, Typography, Paper, Table, TableBody, TableCell, 
     TableContainer, TableHead, TableRow, Button, Chip, CircularProgress, Box 
 } from '@mui/material';
-import api from '../ApiConf'; // Ajusta la ruta según tu proyecto
+import api from '../ApiConf';
 
 const AdminReservations = () => {
     const [reservations, setReservations] = useState([]);

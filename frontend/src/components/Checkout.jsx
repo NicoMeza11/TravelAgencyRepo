@@ -10,9 +10,8 @@ import api from '../ApiConf';
 function Checkout() {
     const location = useLocation();
     const navigate = useNavigate();
-    const { reservationSummary } = location.state || {}; // Recibimos los datos del paso anterior
+    const { reservationSummary } = location.state || {};
 
-    // Estados para el formulario de tarjeta
     const [paymentData, setPaymentData] = useState({
         cardNumber: '',
         expirationDate: '',

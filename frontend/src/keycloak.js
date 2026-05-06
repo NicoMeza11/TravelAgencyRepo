@@ -1,9 +1,9 @@
 import Keycloak from 'keycloak-js';
 
 const keycloak = new Keycloak({
-    url: 'http://localhost:8081',        
-    realm: 'spring-boot-realm-dev',                   
-    clientId: 'spring-client-api-rest',           
+    url: import.meta.env.VITE_KEYCLOAK_HOST_URL,        
+    realm: import.meta.env.VITE_KEYCLOAK_REALM,                  
+    clientId: import.meta.env.VITE_KEYCLOAK_CLIENT_ID,          
 });
 
 export default keycloak;

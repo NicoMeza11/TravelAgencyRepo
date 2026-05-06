@@ -96,7 +96,7 @@ function UserProfile(){
             <Grid item xs={12}>
               <TextField
                 fullWidth label="Correo Electrónico" name="email"
-                value={formData.email} disabled // El correo suele ser el ID en Keycloak, mejor no cambiarlo aquí
+                value={formData.email} disabled
                 helperText="El correo no puede ser modificado por seguridad."
               />
             </Grid>
