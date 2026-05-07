@@ -1,0 +1,141 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: travel-db
+    environment:
+      - POSTGRES_DB=travel_agency_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=nico11
+    networks:
+      - backend-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.7
+    container_name: keycloak-travel
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres:5432/travel_agency_db
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=nico11
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    command: start-dev 
+    #volumes:
+    #  - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+    ports:
+      - "8081:8080"
+    depends_on:
+      - postgres
+    networks:
+      - backend-network
+
+  backend1:
+    image: mi-backend
+    restart: on-failure
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=travel_agency_db
+      - DB_USER=postgres
+      - DB_PW=nico11
+      - KCK_URL=http://keycloak:8080
+      - KCK_REALM=spring-boot-realm-dev
+      - KCK_ADMIN_USER=admin
+      - KCK_ADMIN_PASSWORD=admin
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - backend-network
+
+  backend2:
+    image: mi-backend
+    restart: on-failure
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=travel_agency_db
+      - DB_USER=postgres
+      - DB_PW=nico11
+      - KCK_URL=http://keycloak:8080
+      - KCK_REALM=spring-boot-realm-dev
+      - KCK_ADMIN_USER=admin
+      - KCK_ADMIN_PASSWORD=admin
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - backend-network
+
+  backend3:
+    image: mi-backend
+    restart: on-failure
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=travel_agency_db
+      - DB_USER=postgres
+      - DB_PW=nico11
+      - KCK_URL=http://keycloak:8080
+      - KCK_REALM=spring-boot-realm-dev
+      - KCK_ADMIN_USER=admin
+      - KCK_ADMIN_PASSWORD=admin
+    depends_on:
+      - postgres
+      - keycloak
+    networks:
+      - backend-network
+
+  nginx-backend:
+    image: nginx:latest
+    ports:
+      - "8100:8100"
+    volumes:
+      - ./nginx-backend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend1
+      - backend2
+      - backend3
+    networks:
+      - backend-network
+
+  frontend1:
+    image: mi-frontend:latest
+    environment:
+      - VITE_KEYCLOAK_CLIENT_ID=spring-client-api-rest
+      - VITE_KEYCLOAK_HOST_URL=http://localhost:8081
+      - VITE_KEYCLOAK_REALM=spring-boot-realm-dev
+    networks:
+      - frontend-network
+      
+  frontend2:
+    image: mi-frontend:latest
+    environment:
+      - VITE_KEYCLOAK_CLIENT_ID=spring-client-api-rest
+      - VITE_KEYCLOAK_HOST_URL=http://localhost:8081
+      - VITE_KEYCLOAK_REALM=spring-boot-realm-dev
+    networks:
+      - frontend-network
+
+  frontend3:
+    image: mi-frontend:latest
+    environment:
+      - VITE_KEYCLOAK_CLIENT_ID=spring-client-api-rest
+      - VITE_KEYCLOAK_HOST_URL=http://localhost:8081
+      - VITE_KEYCLOAK_REALM=spring-boot-realm-dev
+    networks:
+      - frontend-network
+      
+  nginx-frontend:
+    image: nginx:latest
+    ports:
+      - "8070:80"
+    volumes:
+      - ./nginx-frontend.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend1
+      - frontend2
+      - frontend3
+    networks:
+      - frontend-network
+
+networks:
+  backend-network:
+  frontend-network:

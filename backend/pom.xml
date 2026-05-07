@@ -173,6 +173,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<finalName>mi-backend</finalName>
 	</build>
 
 </project>
