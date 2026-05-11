@@ -47,8 +47,20 @@ public class KeycloakServiceImpl implements IKeycloakService {
 
             userResource.resetPassword(credentialRepresentation);
         }
+    }
 
+    @Override
+    public void deleteUser(String userId) {
+        keycloakProvider.getUserResource()
+                .get(userId)
+                .remove();
+    }
 
+    public void disableUser(String userId){
+        UserResource userResource = keycloakProvider.getUserResource().get(userId);
 
+        UserRepresentation user = userResource.toRepresentation();
+        user.setEnabled(false);
+        userResource.update(user);
     }
 }

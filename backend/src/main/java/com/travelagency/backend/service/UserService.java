@@ -2,6 +2,7 @@ package com.travelagency.backend.service;
 
 import com.travelagency.backend.Controller.dto.UserDTO;
 import com.travelagency.backend.entities.UserEntity;
+import com.travelagency.backend.repository.ReservationRepository;
 import com.travelagency.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final IKeycloakService keycloakService;
+    private final ReservationRepository reservationRepository;
 
     public UserEntity getUserById(String userId){
         return userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User can't be found on DB"));
@@ -41,7 +43,6 @@ public class UserService {
         userEntity.setUserStatus(true);
 
         userRepository.save(userEntity);
-
         keycloakService.updateUser(kcUserId,userDTO);
     }
 
@@ -66,4 +67,22 @@ public class UserService {
         userRepository.save(userEntity);
         log.info("User {} synced from Keycloak to database", userDTO.getId());
     }
+
+    @Transactional
+    public void deleteAccount(String userId){
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Cannot find user with id: " + userId));
+
+        System.out.println("The user have " + reservationRepository.countByIdCustomerAndReservationStatus(userId,"CONFIRMED") + " paid reservations");
+        if(reservationRepository.countByIdCustomerAndReservationStatus(userId,"CONFIRMED") >= 1){
+            keycloakService.disableUser(userId);
+            user.setUserStatus(false);
+            userRepository.save(user);
+        }else{
+            keycloakService.deleteUser(userId);
+            userRepository.deleteById(userId);
+        }
+    }
+
+
 }

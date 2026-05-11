@@ -7,4 +7,6 @@ import java.util.List;
 public interface IKeycloakService {
 
     void updateUser(String userId, UserDTO userDTO);
+    void deleteUser(String userId);
+    void disableUser(String userId);
 }

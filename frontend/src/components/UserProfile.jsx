@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Container, Paper, Typography, TextField, Button, Grid, Box, Alert, CircularProgress 
+  Container, Paper, Typography, TextField, Button, Grid, Box, Alert, CircularProgress,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle 
 } from '@mui/material';
 import api from '../ApiConf';
 import keycloak from '../keycloak';
@@ -9,6 +10,9 @@ function UserProfile(){
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState({ type: '', text: '' });
+
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     const [formData, setFormData] = useState({
     firstName: '',
@@ -60,6 +64,27 @@ function UserProfile(){
       setMessage({ type: 'error', text: 'Error al actualizar el perfil. Intenta de nuevo.' });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleOpenDialog = () => setOpenDeleteDialog(true);
+  const handleCloseDialog = () => setOpenDeleteDialog(false);
+
+  const confirmDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      await api.delete(`/user/${userId}`);
+      
+      keycloak.logout({ //if the user is delete, we close the user session
+        redirectUri: window.location.origin 
+      });  
+      
+    } catch (error) {
+      console.error("Error al eliminar cuenta:", error);
+      setMessage({ type: 'error', text: 'Hubo un error al intentar eliminar la cuenta.' });
+      setOpenDeleteDialog(false); 
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -119,10 +144,23 @@ function UserProfile(){
               />
             </Grid>
             <Grid item xs={12}>
-              <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                
                 <Button 
-                  type="submit" variant="contained" color="primary" 
-                  size="large" disabled={saving}
+                  variant="outlined" 
+                  color="error" 
+                  onClick={handleOpenDialog}
+                  disabled={saving || deleting}
+                >
+                  Eliminar Cuenta
+                </Button>
+
+                <Button 
+                  type="submit" 
+                  variant="contained" 
+                  color="primary" 
+                  size="large" 
+                  disabled={saving || deleting}
                 >
                   {saving ? 'Guardando...' : 'Guardar Cambios'}
                 </Button>
@@ -131,6 +169,32 @@ function UserProfile(){
           </Grid>
         </form>
       </Paper>
+
+      <Dialog //CONFIRMATION OF THE DELETE ACCOUNT
+        open={openDeleteDialog}
+        onClose={handleCloseDialog}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title" sx={{ color: 'error.main' }}>
+          ¿Estás seguro de que deseas eliminar tu cuenta?
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Esta acción no se puede deshacer. Si tienes reservas previas, tus datos de facturación se mantendrán por motivos legales, pero perderás el acceso al sistema.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions sx={{ p: 2 }}>
+          <Button onClick={handleCloseDialog} disabled={deleting} color="inherit">
+            Cancelar
+          </Button>
+          <Button onClick={confirmDeleteAccount} disabled={deleting} color="error" variant="contained" autoFocus>
+            {deleting ? 'Procesando...' : 'Sí, Eliminar Cuenta'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+
     </Container>
   );
 

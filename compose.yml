@@ -6,6 +6,10 @@ services:
       - POSTGRES_DB=travel_agency_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=nico11
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - backend-network
 
@@ -19,9 +23,9 @@ services:
       - KC_DB_PASSWORD=nico11
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=admin
-    command: start-dev 
-    #volumes:
-    #  - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
+    command: start-dev --import-realm
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json
     ports:
       - "8081:8080"
     depends_on:
@@ -30,14 +34,15 @@ services:
       - backend-network
 
   backend1:
-    image: mi-backend
+    image: nicolasmeza/mi-backend
     restart: on-failure
     environment:
       - DB_HOST=postgres
       - DB_NAME=travel_agency_db
       - DB_USER=postgres
       - DB_PW=nico11
-      - KCK_URL=http://keycloak:8080
+      - KCK_URL=http://keycloak:8080       
+      - KCK_PUBLIC_URL=http://18.230.122.69:8081 
       - KCK_REALM=spring-boot-realm-dev
       - KCK_ADMIN_USER=admin
       - KCK_ADMIN_PASSWORD=admin
@@ -48,14 +53,15 @@ services:
       - backend-network
 
   backend2:
-    image: mi-backend
+    image: nicolasmeza/mi-backend
     restart: on-failure
     environment:
       - DB_HOST=postgres
       - DB_NAME=travel_agency_db
       - DB_USER=postgres
       - DB_PW=nico11
-      - KCK_URL=http://keycloak:8080
+      - KCK_URL=http://keycloak:8080        
+      - KCK_PUBLIC_URL=http://18.230.122.69:8081 
       - KCK_REALM=spring-boot-realm-dev
       - KCK_ADMIN_USER=admin
       - KCK_ADMIN_PASSWORD=admin
@@ -66,14 +72,15 @@ services:
       - backend-network
 
   backend3:
-    image: mi-backend
+    image: nicolasmeza/mi-backend
     restart: on-failure
     environment:
       - DB_HOST=postgres
       - DB_NAME=travel_agency_db
       - DB_USER=postgres
       - DB_PW=nico11
-      - KCK_URL=http://keycloak:8080
+      - KCK_URL=http://keycloak:8080       
+      - KCK_PUBLIC_URL=http://18.230.122.69t:8081 
       - KCK_REALM=spring-boot-realm-dev
       - KCK_ADMIN_USER=admin
       - KCK_ADMIN_PASSWORD=admin
@@ -97,28 +104,28 @@ services:
       - backend-network
 
   frontend1:
-    image: mi-frontend:latest
+    image: nicolasmeza/mi-frontend
     environment:
       - VITE_KEYCLOAK_CLIENT_ID=spring-client-api-rest
-      - VITE_KEYCLOAK_HOST_URL=http://localhost:8081
+      - VITE_KEYCLOAK_HOST_URL=http://18.230.122.69:8081
       - VITE_KEYCLOAK_REALM=spring-boot-realm-dev
     networks:
       - frontend-network
       
   frontend2:
-    image: mi-frontend:latest
+    image: nicolasmeza/mi-frontend
     environment:
       - VITE_KEYCLOAK_CLIENT_ID=spring-client-api-rest
-      - VITE_KEYCLOAK_HOST_URL=http://localhost:8081
+      - VITE_KEYCLOAK_HOST_URL=http://18.230.122.69:8081
       - VITE_KEYCLOAK_REALM=spring-boot-realm-dev
     networks:
       - frontend-network
 
   frontend3:
-    image: mi-frontend:latest
+    image: nicolasmeza/mi-frontend
     environment:
       - VITE_KEYCLOAK_CLIENT_ID=spring-client-api-rest
-      - VITE_KEYCLOAK_HOST_URL=http://localhost:8081
+      - VITE_KEYCLOAK_HOST_URL=http://18.230.122.69:8081
       - VITE_KEYCLOAK_REALM=spring-boot-realm-dev
     networks:
       - frontend-network
@@ -139,3 +146,6 @@ services:
 networks:
   backend-network:
   frontend-network:
+
+volumes:
+  postgres_data:

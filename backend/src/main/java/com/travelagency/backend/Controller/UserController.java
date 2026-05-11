@@ -14,7 +14,7 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping("/api/user")
 @RequiredArgsConstructor
-@CrossOrigin(origins="http://localhost:5173")
+@CrossOrigin(origins={"http://localhost:5173", "http://localhost:8070","http://18.230.122.69:8070"})
 public class UserController {
 
     private final UserService userService;
@@ -22,17 +22,10 @@ public class UserController {
     @PutMapping("/update/{userId}")
     public ResponseEntity<String> updateUser(@RequestBody UserDTO userDTO, @PathVariable String userId){
 
-        System.out.println("Peticion recibida");
-        try {
-            userService.updateUserDb(userId, userDTO);
-            System.out.println("----> Actualización exitosa");
-            return ResponseEntity.ok("User updated successfully");
+        userService.updateUserDb(userId, userDTO);
+        System.out.println("Update succesfully");
+        return ResponseEntity.ok("User updated successfully");
 
-        } catch (Exception e) {
-            System.err.println("----> ERROR EN BACKEND AL ACTUALIZAR: " + e.getMessage());
-            e.printStackTrace(); // Esto imprimirá el error real en tu consola de Java
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error interno: " + e.getMessage());
-        }
     }
 
     @PostMapping("/sync")
@@ -44,5 +37,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<UserEntity> getUserById(@PathVariable String userId){
         return ResponseEntity.ok(userService.getUserById(userId));
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deactivateAccount(@PathVariable String userId){
+        userService.deleteAccount(userId);
+        return ResponseEntity.noContent().build();
     }
 }
