@@ -1,0 +1,50 @@
+name: Frontend - Docker
+
+on:
+  push:
+    branches: [ "master", "main" ]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+
+jobs:
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Construir imagen Docker
+        working-directory: ./frontend 
+        run: docker build -t nicolasmeza/mi-frontend .
+
+      - name: Guardar imagen Docker como archivo
+        run: docker save nicolasmeza/mi-frontend -o frontend_image.tar
+
+      - name: Subir imagen Docker como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-docker-image
+          path: frontend_image.tar
+
+  docker-push:
+    runs-on: ubuntu-latest
+    needs: docker-build
+    steps:
+      - name: Descargar imagen Docker
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-docker-image
+          path: .
+
+      - name: Cargar imagen Docker
+        run: docker load -i frontend_image.tar
+
+      - name: Login en Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Subir imagen a Docker Hub
+        run: docker push nicolasmeza/mi-frontend
