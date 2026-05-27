@@ -80,7 +80,7 @@ services:
       - DB_USER=postgres
       - DB_PW=nico11
       - KCK_URL=http://keycloak:8080       
-      - KCK_PUBLIC_URL=http://18.230.122.69t:8081 
+      - KCK_PUBLIC_URL=http://18.230.122.69:8081 
       - KCK_REALM=spring-boot-realm-dev
       - KCK_ADMIN_USER=admin
       - KCK_ADMIN_PASSWORD=admin
