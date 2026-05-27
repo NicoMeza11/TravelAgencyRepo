@@ -50,7 +50,7 @@ public class KeycloakServiceImplTest {
         when(usersResource.get(USER_ID)).thenReturn(userResource);
 
         // Mock the object conversion
-        when(userResource.toRepresentation()).thenReturn(userRepresentation);
+        lenient().when(userResource.toRepresentation()).thenReturn(userRepresentation);
     }
 
     // ==========================================
@@ -125,5 +125,40 @@ public class KeycloakServiceImplTest {
         assertFalse(capturedCredential.isTemporary());
         assertEquals(OAuth2Constants.PASSWORD, capturedCredential.getType());
         assertEquals(newPassword, capturedCredential.getValue());
+    }
+
+    // ==========================================
+    // TESTS FOR deleteUser
+    // ==========================================
+
+    @Test
+    void deleteUser_CallsRemoveOnUserResource() {
+        // Act
+        keycloakService.deleteUser(USER_ID);
+
+        // Assert
+        // Verify that the remove() method was called exactly once
+        verify(userResource, times(1)).remove();
+    }
+
+    // ==========================================
+    // TESTS FOR disableUser
+    // ==========================================
+
+    @Test
+    void disableUser_SetsUserEnabledToFalseAndUpdates() {
+        // Arrange
+        // We set the initial state to true to ensure that the method changes it
+        userRepresentation.setEnabled(true);
+
+        // Act
+        keycloakService.disableUser(USER_ID);
+
+        // Assert
+        // 1. Verify that the object in memory changed to false
+        assertFalse(userRepresentation.isEnabled());
+
+        // 2. Verify that Keycloak's update method was called with the modified object
+        verify(userResource, times(1)).update(userRepresentation);
     }
 }

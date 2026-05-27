@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import com.travelagency.backend.Controller.dto.UserDTO;
 import com.travelagency.backend.entities.UserEntity;
+import com.travelagency.backend.repository.ReservationRepository;
 import com.travelagency.backend.repository.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +28,9 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    @Mock
+    private ReservationRepository reservationRepository;
 
     private UserEntity existingUser;
     private UserDTO userDTO;
@@ -170,6 +174,64 @@ public class UserServiceTest {
                         savedUser.getNationality() == null &&
                         savedUser.getUserStatus() == true
         ));
+    }
+
+    // ==========================================
+    // 4. TESTS FOR deleteAccount
+    // ==========================================
+
+    @Test
+    void deleteAccount_WhenUserNotFound_ThrowsRuntimeException() {
+        // Arrange
+        String invalidId = "invalid-id";
+        when(userRepository.findById(invalidId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            userService.deleteAccount(invalidId);
+        });
+
+        assertEquals("Cannot find user with id: " + invalidId, exception.getMessage());
+
+        // We verify that no attempt was made to count reserves after the failure
+        verify(reservationRepository, never()).countByIdCustomerAndReservationStatus(anyString(), anyString());
+    }
+
+    @Test
+    void deleteAccount_WithConfirmedReservations_DisablesUser() {
+        // Arrange
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(existingUser));
+        when(reservationRepository.countByIdCustomerAndReservationStatus(USER_ID, "CONFIRMED")).thenReturn(1L);
+
+        // Act
+        userService.deleteAccount(USER_ID);
+
+        // Assert
+        verify(keycloakService).disableUser(USER_ID); // Verify disabled on Keycloak
+        verify(userRepository).save(existingUser);    // Verify updated on DB
+        assertFalse(existingUser.getUserStatus());    // Verify new false status
+
+        // Make sure it was deleted permanently
+        verify(keycloakService, never()).deleteUser(anyString());
+        verify(userRepository, never()).deleteById(anyString());
+    }
+
+    @Test
+    void deleteAccount_WithoutConfirmedReservations_DeletesUser() {
+        // Arrange
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(existingUser));
+        when(reservationRepository.countByIdCustomerAndReservationStatus(USER_ID, "CONFIRMED")).thenReturn(0L);
+
+        // Act
+        userService.deleteAccount(USER_ID);
+
+        // Assert
+        verify(keycloakService).deleteUser(USER_ID); // Verify delete on Keycloak
+        verify(userRepository).deleteById(USER_ID);  // Verify delete on DB
+
+        // Make sure it was not saved or disabled
+        verify(keycloakService, never()).disableUser(anyString());
+        verify(userRepository, never()).save(any(UserEntity.class));
     }
 
 }
