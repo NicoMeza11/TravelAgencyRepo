@@ -113,6 +113,10 @@ const UserReservations = () => {
         window.print();
     };
 
+    const handlePaymentRedirect = (res) => {
+        navigate('/home/checkout', { state: { reservationSummary: res } });
+    };
+
     const handleViewPackage = async (idPackage) => {
         setOpenPackageModal(true); 
         setLoadingPackage(true);
@@ -203,7 +207,7 @@ const UserReservations = () => {
                                         variant="contained" 
                                         color="success" 
                                         size="small"
-                                        onClick={() => console.log("Ir a pagar", res.idReservation)}
+                                        onClick={() => handlePaymentRedirect(res)}
                                     >
                                         Pagar
                                     </Button>
