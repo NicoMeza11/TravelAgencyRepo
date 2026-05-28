@@ -3,8 +3,6 @@ name: Backend - Docker
 on:
   push:
     branches: [ "master", "main" ]
-    paths:
-      - 'backend/**' 
   workflow_dispatch:
 
 jobs:

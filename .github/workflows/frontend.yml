@@ -3,8 +3,6 @@ name: Frontend - Docker
 on:
   push:
     branches: [ "master", "main" ]
-    paths:
-      - 'frontend/**'
   workflow_dispatch:
 
 jobs:
@@ -20,6 +18,11 @@ jobs:
           echo "VITE_KEYCLOAK_CLIENT_ID=${{ secrets.VITE_KEYCLOAK_CLIENT_ID }}" >> .env
           echo "VITE_KEYCLOAK_HOST_URL=${{ secrets.VITE_KEYCLOAK_HOST_URL }}" >> .env
           echo "VITE_KEYCLOAK_REALM=${{ secrets.VITE_KEYCLOAK_REALM }}" >> .env
+      - name: Build Vite
+        run: |
+          cd frontend
+          npm install
+          npm run build
 
       - name: Construir imagen Docker
         working-directory: ./frontend 
